@@ -1753,6 +1753,538 @@ Check API version:
 curl http://localhost:4000/api/version
 ```
 
+---
+
+## 🧪 Complete Postman Testing Guide
+
+### **Method 1: Using Postman Collection (Recommended)**
+
+#### **Step 1: Create a New Postman Collection**
+
+1. Open Postman
+2. Click **"Collections"** on the left sidebar
+3. Click **"+ Create Collection"**
+4. Name it: `IntmavensApi Email Service`
+5. Description: `Complete API testing for email service`
+6. Click **Create**
+
+#### **Step 2: Create Environment Variables**
+
+1. Click **"Environments"** on the left sidebar
+2. Click **"+"** to create a new environment
+3. Name: `Local Development`
+4. Add variables:
+
+| Variable | Initial Value | Current Value |
+|----------|---------------|---------------|
+| `base_url` | http://localhost:4000 | http://localhost:4000 |
+| `admin_email` | your-email@gmail.com | your-email@gmail.com |
+| `test_email` | test@example.com | test@example.com |
+| `api_version` | v1 | v1 |
+
+5. Click **Save**
+6. Select `Local Development` from environment dropdown (top right)
+
+#### **Step 3: Add Health Check Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Health Check`
+3. Method: **GET**
+4. URL: `{{base_url}}/health`
+5. Click **Send**
+6. Expected Response:
+   ```json
+   {
+     "status": "OK",
+     "message": "IntmavensApi is running",
+     "timestamp": "2025-01-15T10:30:00.000Z"
+   }
+   ```
+
+#### **Step 4: Add Contact Form Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Contact Form - Success`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/contact`
+5. **Headers Tab:**
+   - Key: `Content-Type` | Value: `application/json`
+
+6. **Body Tab** (select **raw** → **JSON**):
+   ```json
+   {
+     "name": "John Doe",
+     "email": "{{test_email}}",
+     "phone": "+1-555-0123",
+     "message": "I'm interested in your cloud migration services. Can you provide more information about your offerings?"
+   }
+   ```
+
+7. **Tests Tab** (add assertions):
+   ```javascript
+   // Check status code
+   pm.test("Status code is 200", function () {
+       pm.response.to.have.status(200);
+   });
+
+   // Check response structure
+   pm.test("Response has ok property", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData).to.have.property('ok');
+   });
+
+   // Check both emails sent
+   pm.test("Both admin and user emails sent", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.data.adminEmail).to.equal(true);
+       pm.expect(jsonData.data.userEmail).to.equal(true);
+   });
+
+   // Check message
+   pm.test("Success message present", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.message).to.include("successfully");
+   });
+   ```
+
+8. Click **Send**
+
+#### **Step 5: Add Career Application Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Career Application`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/career`
+5. **Body** (raw JSON):
+   ```json
+   {
+     "name": "Jane Smith",
+     "email": "{{test_email}}",
+     "phone": "+1-555-0456",
+     "role": "Senior Backend Developer",
+     "message": "I am very interested in the Senior Backend Developer position. With 5+ years of Node.js experience, I believe I can contribute significantly to your team."
+   }
+   ```
+
+6. **Tests Tab:**
+   ```javascript
+   pm.test("Status code is 200", function () {
+       pm.response.to.have.status(200);
+   });
+
+   pm.test("Career application emails sent", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.data.adminEmail).to.equal(true);
+       pm.expect(jsonData.data.userEmail).to.equal(true);
+   });
+   ```
+
+7. Click **Send**
+
+#### **Step 6: Add Blog Comment Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Blog Comment`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/blog`
+5. **Body** (raw JSON):
+   ```json
+   {
+     "name": "Michael Chen",
+     "email": "{{test_email}}",
+     "message": "This article was incredibly helpful! The step-by-step guide on cloud migration really clarified the process for me. Keep up the great work!",
+     "phone": "+1-555-0789",
+     "postTitle": "Cloud Migration Best Practices 2025"
+   }
+   ```
+
+6. **Tests Tab:**
+   ```javascript
+   pm.test("Status code is 200", function () {
+       pm.response.to.have.status(200);
+   });
+
+   pm.test("Blog comment emails sent", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.data.adminEmail).to.equal(true);
+       pm.expect(jsonData.data.userEmail).to.equal(true);
+   });
+   ```
+
+7. Click **Send**
+
+#### **Step 7: Add Generic Mail Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Generic Mail (CONTACT)`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/send`
+5. **Body** (raw JSON):
+   ```json
+   {
+     "templateType": "CONTACT",
+     "name": "Alex Johnson",
+     "email": "{{test_email}}",
+     "phone": "+1-555-0101",
+     "message": "Generic email test using CONTACT template"
+   }
+   ```
+
+6. Click **Send**
+
+#### **Step 8: Add Validation Error Test**
+
+1. Right-click on collection → **Add request**
+2. Name: `Contact Form - Missing Field (Error Test)`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/contact`
+5. **Body** (raw JSON) - **missing phone field**:
+   ```json
+   {
+     "name": "Test User",
+     "email": "{{test_email}}",
+     "message": "This is missing the phone field"
+   }
+   ```
+
+6. **Tests Tab:**
+   ```javascript
+   pm.test("Status code is 400", function () {
+       pm.response.to.have.status(400);
+   });
+
+   pm.test("Error response for missing field", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.ok).to.equal(false);
+       pm.expect(jsonData.error).to.include("required");
+   });
+   ```
+
+7. Click **Send** - Should see error response
+
+#### **Step 9: Add Email Format Validation Test**
+
+1. Right-click on collection → **Add request**
+2. Name: `Contact Form - Invalid Email (Error Test)`
+3. Method: **POST**
+4. URL: `{{base_url}}/api/mail/contact`
+5. **Body** (raw JSON) - **invalid email**:
+   ```json
+   {
+     "name": "Test User",
+     "email": "invalid-email-format",
+     "phone": "+1-555-0123",
+     "message": "This email is invalid"
+   }
+   ```
+
+6. **Tests Tab:**
+   ```javascript
+   pm.test("Status code is 400", function () {
+       pm.response.to.have.status(400);
+   });
+
+   pm.test("Email validation error", function () {
+       var jsonData = pm.response.json();
+       pm.expect(jsonData.ok).to.equal(false);
+   });
+   ```
+
+7. Click **Send** - Should see validation error
+
+#### **Step 10: Add API Version Request**
+
+1. Right-click on collection → **Add request**
+2. Name: `Get API Version`
+3. Method: **GET**
+4. URL: `{{base_url}}/api/version`
+5. Click **Send**
+6. Expected Response:
+   ```json
+   {
+     "version": "1.0.0",
+     "service": "IntmavensApi Email Service",
+     "endpoints": {
+       "contact": "POST /api/mail/contact",
+       "career": "POST /api/mail/career",
+       "blog": "POST /api/mail/blog",
+       "send": "POST /api/mail/send"
+     },
+     "templates": ["CONTACT", "CAREER", "BLOG"]
+   }
+   ```
+
+---
+
+### **Method 2: Import Pre-made Collection (Postman JSON)**
+
+Save this as `IntmavensApi-Collection.json`:
+
+```json
+{
+  "info": {
+    "name": "IntmavensApi Email Service",
+    "description": "Complete API testing collection for IntmavensApi",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health"
+          }
+        },
+        {
+          "name": "API Version",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/version"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Email Endpoints",
+      "item": [
+        {
+          "name": "Contact Form",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/mail/contact",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"John Doe\", \"email\": \"{{test_email}}\", \"phone\": \"+1-555-0123\", \"message\": \"Test message\"}"
+            }
+          }
+        },
+        {
+          "name": "Career Application",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/mail/career",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Jane Smith\", \"email\": \"{{test_email}}\", \"phone\": \"+1-555-0456\", \"role\": \"Senior Developer\", \"message\": \"Interested in role\"}"
+            }
+          }
+        },
+        {
+          "name": "Blog Comment",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/mail/blog",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Michael Chen\", \"email\": \"{{test_email}}\", \"message\": \"Great article!\", \"postTitle\": \"Cloud Migration\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "test_email",
+      "value": "test@example.com"
+    }
+  ]
+}
+```
+
+**To Import:**
+1. Click **Import** button in Postman
+2. Choose **Paste Raw Text**
+3. Paste the JSON above
+4. Click **Import**
+
+---
+
+### **Method 3: Quick Testing Checklist**
+
+Use this checklist to test all endpoints systematically:
+
+#### **Pre-Testing Setup**
+- [ ] Backend running: `npm run dev`
+- [ ] Postman open with environment set to `Local Development`
+- [ ] Gmail inbox ready to receive test emails
+- [ ] `.env` file has valid SMTP credentials
+
+#### **Basic Functionality Tests**
+- [ ] **Health Check** - GET `/health` → Status 200
+- [ ] **API Version** - GET `/api/version` → Shows all endpoints
+- [ ] **Contact Form** - POST `/api/mail/contact` → Both emails sent
+- [ ] **Career Form** - POST `/api/mail/career` → Both emails sent
+- [ ] **Blog Comment** - POST `/api/mail/blog` → Both emails sent
+- [ ] **Generic Mail** - POST `/api/mail/send` → Works with any template
+
+#### **Validation Tests**
+- [ ] **Missing Name** - POST with empty name → Error 400
+- [ ] **Missing Email** - POST with empty email → Error 400
+- [ ] **Invalid Email** - POST with invalid format → Error 400
+- [ ] **Missing Phone** - POST without phone → Error 400
+- [ ] **Invalid Template Type** - POST with wrong templateType → Error 400
+
+#### **Email Delivery Tests**
+- [ ] Admin email received in inbox ✅
+- [ ] User confirmation email received ✅
+- [ ] Email subject contains correct format
+- [ ] Email body has form data
+- [ ] Email styling looks professional
+
+#### **Edge Cases**
+- [ ] Very long message (500+ chars) → Sends successfully
+- [ ] Special characters in name (é, ñ, etc.) → Sends successfully
+- [ ] Multiple spaces in message → Sends successfully
+- [ ] Phone with different formats (+1-555, +1 555, etc.) → Accepts all
+
+---
+
+### **Method 4: Using cURL (Terminal)**
+
+```bash
+# Test Contact Form
+curl -X POST http://localhost:4000/api/mail/contact \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "test@example.com",
+    "phone": "+1-555-0123",
+    "message": "Test message"
+  }'
+
+# Test Career Form
+curl -X POST http://localhost:4000/api/mail/career \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Smith",
+    "email": "test@example.com",
+    "phone": "+1-555-0456",
+    "role": "Senior Developer",
+    "message": "Interested in role"
+  }'
+
+# Test Blog Comment
+curl -X POST http://localhost:4000/api/mail/blog \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Michael Chen",
+    "email": "test@example.com",
+    "message": "Great article!",
+    "postTitle": "Cloud Migration"
+  }'
+
+# Health Check
+curl http://localhost:4000/health
+
+# API Version
+curl http://localhost:4000/api/version
+```
+
+---
+
+### **Method 5: Testing with Thunder Client (VS Code Extension)**
+
+1. Install **Thunder Client** extension in VS Code
+2. Click Thunder Client icon in left sidebar
+3. Create new request:
+   - **Method:** POST
+   - **URL:** `http://localhost:4000/api/mail/contact`
+4. **Body Tab** (select JSON):
+   ```json
+   {
+     "name": "Test User",
+     "email": "test@example.com",
+     "phone": "+1-555-0123",
+     "message": "Test message"
+   }
+   ```
+5. Click **Send**
+
+---
+
+### **Common Response Scenarios**
+
+#### **Success Response (Both emails sent)**
+```json
+{
+  "ok": true,
+  "message": "Email sent successfully",
+  "data": {
+    "adminEmail": true,
+    "userEmail": true
+  }
+}
+```
+Status Code: **200**
+
+#### **Validation Error (Missing field)**
+```json
+{
+  "ok": false,
+  "error": "Missing required field: phone"
+}
+```
+Status Code: **400**
+
+#### **Email Format Error**
+```json
+{
+  "ok": false,
+  "error": "Invalid email format"
+}
+```
+Status Code: **400**
+
+#### **Server Error (SMTP failure)**
+```json
+{
+  "ok": false,
+  "error": "Failed to send email. Please check server logs."
+}
+```
+Status Code: **500**
+
+#### **Partial Success (One email failed)**
+```json
+{
+  "ok": true,
+  "message": "Email sending completed",
+  "data": {
+    "adminEmail": true,
+    "userEmail": false
+  }
+}
+```
+Status Code: **200**
+
+---
+
 **2. Testing with cURL:**
 
 ```bash
@@ -2363,12 +2895,467 @@ This is normal behavior! Each email is sent independently. Check:
 
 ---
 
-## 📞 Support & Documentation
+# 📸 Step-by-Step Postman Testing Instructions
 
-- **Gmail App Passwords:** [Google Account Help](https://support.google.com/accounts/answer/185833)
-- **Nodemailer:** [Official Documentation](https://nodemailer.com/)
-- **Express.js:** [Official Guide](https://expressjs.com/)
-- **CORS:** [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+## Setup Phase (Do this once)
+
+### Step 1: Download & Install Postman
+```
+1. Go to: https://www.postman.com/downloads/
+2. Choose your OS (Windows/Mac/Linux)
+3. Download and install
+4. Launch Postman
+5. Create a free account or skip login
+```
+
+### Step 2: Start the Backend Server
+```bash
+# Open terminal/command prompt
+cd D:\vs-code\Nick-dev\IntmavensApi
+
+# Start development server
+npm run dev
+
+# You should see:
+# 🚀 IntmavensApi Email Service Started
+# 📍 Server: http://localhost:4000
+# 📧 SMTP: smtp.gmail.com:587
+```
+
+**Keep this terminal open while testing!**
+
+---
+
+### Step 3: Import Postman Collection
+
+**Option A: Using JSON File (Recommended)**
+
+1. Open Postman
+2. Click **Import** button (top-left corner)
+3. Choose **File** tab
+4. Click **Select Files**
+5. Navigate to: `D:\vs-code\Nick-dev\IntmavensApi\`
+6. Select: `IntmavensApi-Postman-Collection.json`
+7. Click **Import**
+8. You should see collection appears in left sidebar with all requests organized
+
+**Option B: Manual Creation**
+
+If import doesn't work, create requests manually (see detailed instructions below)
+
+---
+
+### Step 4: Create Environment Variables
+
+1. In Postman, look at **top-right corner** for **Manage Environments** icon (gear icon)
+2. Click **Manage Environments**
+3. Click **Create Environment**
+4. Fill in details:
+   - **Environment Name:** `Local Development`
+   - **Variable:** `base_url` = `http://localhost:4000`
+   - **Variable:** `test_email` = `test@example.com`
+5. Click **Save**
+6. Close the modal
+7. In the top-right, select `Local Development` from dropdown
+
+**Now you're ready to test!**
+
+---
+
+## Testing Phase
+
+### Test 1: Health Check (Verify Server Running)
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Health & Info
+      ├─ Health Check  ← Click here
+```
+
+**Steps:**
+1. Click **Health Check** in left sidebar
+2. Verify **GET** is selected (method)
+3. Verify URL shows: `{{base_url}}/health`
+4. Click blue **Send** button (right side)
+5. Wait for response
+
+**Expected Result:**
+```
+Status: 200 OK
+
+Response:
+{
+  "status": "OK",
+  "message": "IntmavensApi is running",
+  "timestamp": "2025-01-15T10:30:00.000Z"
+}
+```
+
+✅ If you see this, your server is ready!
+
+---
+
+### Test 2: Contact Form Email
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Success Cases
+      ├─ Contact Form - Valid Request  ← Click here
+```
+
+**Steps:**
+1. Click **Contact Form - Valid Request**
+2. Verify method is **POST**
+3. Verify URL: `{{base_url}}/api/mail/contact`
+4. Check **Body** tab shows JSON:
+   ```json
+   {
+     "name": "John Doe",
+     "email": "{{test_email}}",
+     "phone": "+1-555-0123",
+     "message": "Test message..."
+   }
+   ```
+5. Click **Send** button
+6. Look at response below
+
+**Expected Result:**
+```
+Status: 200 OK
+
+Response:
+{
+  "ok": true,
+  "message": "Email sent successfully",
+  "data": {
+    "adminEmail": true,
+    "userEmail": true
+  }
+}
+```
+
+✅ **Check Your Email!**
+- Open your Gmail inbox
+- You should see 2 emails:
+  1. **Admin Email** (from IntmavensApi) - Subject: `[ADMIN] New Contact Request from John Doe`
+  2. **User Confirmation** - Subject: `We received your contact request`
+
+---
+
+### Test 3: Career Application Email
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Success Cases
+      ├─ Career Application - Valid Request  ← Click here
+```
+
+**Steps:**
+1. Click **Career Application - Valid Request**
+2. Verify method is **POST**
+3. Click **Send**
+4. Check response
+
+**Expected Result:**
+```
+Status: 200 OK
+Data: {
+  "adminEmail": true,
+  "userEmail": true
+}
+```
+
+✅ **Check Your Email!**
+- You should see 2 new emails
+- Admin receives job application details
+- User gets confirmation email
+
+---
+
+### Test 4: Blog Comment Email
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Success Cases
+      ├─ Blog Comment - Valid Request  ← Click here
+```
+
+**Steps:**
+1. Click **Blog Comment - Valid Request**
+2. Click **Send**
+3. Check response status 200 OK
+4. Verify both emails: `adminEmail: true`, `userEmail: true`
+
+✅ **Check Your Email!**
+- Look for blog comment notification emails
+
+---
+
+### Test 5: Generic Email Endpoint
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Success Cases
+      ├─ Generic Mail - CONTACT Template  ← Click here
+```
+
+**Steps:**
+1. Click **Generic Mail - CONTACT Template**
+2. Look at **Body** to see different format:
+   ```json
+   {
+     "templateType": "CONTACT",
+     "name": "Alex Johnson",
+     "email": "{{test_email}}",
+     "phone": "+1-555-0101",
+     "message": "Generic email test using CONTACT template"
+   }
+   ```
+3. Click **Send**
+
+✅ Works just like the specific endpoints!
+
+---
+
+### Test 6: Error Testing - Missing Field
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Error Cases
+      ├─ Contact - Missing Phone (Validation Error)  ← Click here
+```
+
+**Steps:**
+1. Click **Contact - Missing Phone (Validation Error)**
+2. Look at Body - notice `phone` field is missing
+3. Click **Send**
+4. Look at response
+
+**Expected Result:**
+```
+Status: 400 Bad Request
+
+Response:
+{
+  "ok": false,
+  "error": "Missing required field: phone"
+}
+```
+
+⚠️ **Important:** No emails should be sent for this test!
+
+---
+
+### Test 7: Error Testing - Invalid Email Format
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Error Cases
+      ├─ Contact - Invalid Email Format  ← Click here
+```
+
+**Steps:**
+1. Click **Contact - Invalid Email Format**
+2. Look at Body - email is `"invalid-email-format"`
+3. Click **Send**
+
+**Expected Result:**
+```
+Status: 400 Bad Request
+
+Response:
+{
+  "ok": false,
+  "error": "Invalid email format"
+}
+```
+
+⚠️ **No emails sent** - Request blocked by validation
+
+---
+
+### Test 8: Error Testing - Invalid Template Type
+
+**Location in Postman:**
+```
+IntmavensApi Email Service
+  ├─ Email Endpoints - Error Cases
+      ├─ Generic Mail - Invalid Template Type  ← Click here
+```
+
+**Steps:**
+1. Click **Generic Mail - Invalid Template Type**
+2. Look at Body - `templateType: "INVALID_TYPE"`
+3. Click **Send**
+
+**Expected Result:**
+```
+Status: 400 Bad Request
+
+Response:
+{
+  "ok": false,
+  "error": "Invalid template type"
+}
+```
+
+---
+
+## Manual Request Creation (If Needed)
+
+If you can't import the collection, create requests manually:
+
+### Create Contact Request Manually
+
+1. In Postman, click **+** tab at top
+2. **Method:** Change to **POST** (click dropdown)
+3. **URL:** Type `http://localhost:4000/api/mail/contact`
+4. Click **Body** tab
+5. Select **raw**
+6. Change type to **JSON** (dropdown on right)
+7. Paste this:
+   ```json
+   {
+     "name": "John Doe",
+     "email": "test@example.com",
+     "phone": "+1-555-0123",
+     "message": "Test message from contact form"
+   }
+   ```
+8. Click **Send**
+9. You should get status 200 with `"ok": true`
+
+**Repeat for other endpoints:**
+- Change URL to `/api/mail/career` for career form
+- Change URL to `/api/mail/blog` for blog comment
+- Adjust JSON body for different endpoints
+
+---
+
+## Complete Testing Checklist
+
+Print this and check off each test as you complete it:
+
+### Health & Setup
+- [ ] Server is running (`npm run dev` shows startup message)
+- [ ] Postman is open and loaded
+- [ ] Environment variables set (base_url, test_email)
+- [ ] Health Check request returns 200 OK
+
+### Success Cases (Should all return 200 with both emails true)
+- [ ] Contact Form sends successfully
+- [ ] Career Application sends successfully
+- [ ] Blog Comment sends successfully
+- [ ] Generic Mail (CONTACT) sends successfully
+- [ ] Check inbox for 4+ emails (2 per contact test)
+
+### Validation Tests (Should all return 400 errors)
+- [ ] Missing Phone returns error
+- [ ] Invalid Email returns error
+- [ ] Invalid Template Type returns error
+- [ ] Verify NO emails sent for error cases
+
+### Email Verification
+- [ ] Admin emails have `[ADMIN]` prefix in subject
+- [ ] User emails have appropriate subject
+- [ ] Email bodies contain form data
+- [ ] Emails are properly formatted (not plain text)
+
+### Server Stability
+- [ ] Server doesn't crash after tests
+- [ ] Multiple requests work in sequence
+- [ ] Error responses don't break server
+
+---
+
+## Troubleshooting During Testing
+
+### "Cannot GET /health"
+**Problem:** Server not running
+**Solution:** 
+```bash
+cd IntmavensApi
+npm run dev
+```
+
+### "Connection refused" on request
+**Problem:** Backend not accessible
+**Solution:**
+- Make sure `base_url` environment variable is `http://localhost:4000`
+- Make sure port 4000 is not used by another app
+
+### Response shows "Missing required field"
+**Problem:** Request body incomplete
+**Solution:**
+- Make sure all required fields are in JSON body
+- Contact: needs name, email, phone, message
+- Career: needs name, email, phone (role & message optional)
+- Blog: needs name, email, message (phone & postTitle optional)
+
+### No emails received
+**Problem:** SMTP configuration or credentials issue
+**Solution:**
+1. Check `.env` file has valid Gmail credentials
+2. Run SMTP test:
+   ```bash
+   node -e "require('./src/config/mailConfig').transporter.verify((err, success) => { console.log(err || 'SMTP OK'); })"
+   ```
+3. Check response shows `adminEmail: true` AND `userEmail: true`
+4. Check spam/junk folders
+5. Verify test email address is correct
+
+### Email sending shows only partial success
+**Example:** `adminEmail: true`, `userEmail: false`
+**Problem:** One recipient email might be blocked
+**Solution:**
+- Verify recipient email is correct
+- Check if that email provider is blocking emails
+- Try different email address
+- Check server logs for detailed error
+
+### Status 500 error
+**Problem:** Server error
+**Solution:**
+1. Check server terminal for error message
+2. Restart server: `npm run dev`
+3. Verify SMTP connection works
+4. Check `.env` has all required variables
+
+---
+
+## Next Steps After Testing
+
+Once all tests pass:
+
+1. ✅ Update frontend to use actual API URLs
+2. ✅ Test from React forms (contact, career, blog)
+3. ✅ Deploy backend to production
+4. ✅ Update production API URLs in frontend `.env`
+5. ✅ Run full end-to-end testing
+
+---
+
+## Tips for Success
+
+1. **Always start with Health Check** - confirms server is up
+2. **Check all 3 email templates** - contact, career, blog each have different styling
+3. **Look for BOTH emails** - admin email AND user confirmation
+4. **Check spam folder** - emails might go there
+5. **Review error responses** - helpful for debugging
+6. **Keep server logs visible** - shows detailed errors if something fails
+7. **Test error cases** - ensures validation is working
+8. **Use realistic test data** - helps spot issues with formatting
+
+---
+
+**You're all set! Start with Test 1 (Health Check) and work your way through. 🚀**
 
 ---
 
