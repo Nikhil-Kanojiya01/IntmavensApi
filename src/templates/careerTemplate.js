@@ -1,5 +1,5 @@
 module.exports = function careerTemplate(data) {
-  const { name, email, phone, role, message } = data;
+  const { name, email, phone, role } = data;
   
   return {
     subject: `Career Application from ${name} - Position: ${role || 'Not Specified'}`,
@@ -35,11 +35,6 @@ module.exports = function careerTemplate(data) {
               <td style="padding: 12px 0 12px 20px; color: #333;">${role || 'Position not specified'}</td>
             </tr>
           </table>
-          
-          <div style="margin: 30px 0; padding: 20px; background: white; border-radius: 4px; border-left: 4px solid #ff6b6b;">
-            <h3 style="margin-top: 0; color: #333;">Cover Letter / Additional Information:</h3>
-            <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${message || 'No additional information provided'}</p>
-          </div>
           
           <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #ffc107;">
             <p style="margin: 0; color: #856404; font-size: 14px;">

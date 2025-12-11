@@ -1,8 +1,8 @@
 module.exports = function blogTemplate(data) {
-  const { name, email, phone, message, postTitle = 'Blog Post' } = data;
+  const { name, email, message, website } = data;
   
   return {
-    subject: `New Blog Comment/Inquiry from ${name} - ${postTitle}`,
+    subject: `New Blog Comment from ${name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -24,16 +24,14 @@ module.exports = function blogTemplate(data) {
                 <a href="mailto:${email}" style="color: #4facfe; text-decoration: none;">${email}</a>
               </td>
             </tr>
+            ${website && website !== 'Not provided' ? `
             <tr>
-              <td style="padding: 12px 0; border-bottom: 1px solid #ddd; font-weight: bold; color: #4facfe;">Phone:</td>
-              <td style="padding: 12px 0 12px 20px; border-bottom: 1px solid #ddd; color: #333;">
-                <a href="tel:${phone}" style="color: #4facfe; text-decoration: none;">${phone || 'Not provided'}</a>
+              <td style="padding: 12px 0; font-weight: bold; color: #4facfe;">Website:</td>
+              <td style="padding: 12px 0 12px 20px; color: #333;">
+                <a href="${website}" target="_blank" style="color: #4facfe; text-decoration: none;">${website}</a>
               </td>
             </tr>
-            <tr>
-              <td style="padding: 12px 0; font-weight: bold; color: #4facfe;">Blog Post:</td>
-              <td style="padding: 12px 0 12px 20px; color: #333;">${postTitle}</td>
-            </tr>
+            ` : ''}
           </table>
           
           <div style="margin: 30px 0; padding: 20px; background: white; border-radius: 4px; border-left: 4px solid #4facfe;">

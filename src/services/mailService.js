@@ -1,12 +1,7 @@
 const transporter = require('../config/mailConfig');
 const { buildTemplate, TEMPLATE_TYPES } = require('../templates');
 
-/**
- * Send email to both admin and user
- * @param {string} templateType - Type of template (CONTACT, CAREER, BLOG, or custom)
- * @param {object} formData - Form data to populate template
- * @returns {object} - Results containing admin and user email info
- */
+
 async function sendEmail(templateType, formData) {
   try {
     // Validate template type
@@ -106,11 +101,7 @@ async function sendEmail(templateType, formData) {
   }
 }
 
-/**
- * Send raw email (without template)
- * @param {object} options - Email options {from, to, subject, html, text}
- * @returns {object} - Email info
- */
+
 async function sendRawEmail(options) {
   try {
     const mailOptions = {
@@ -130,13 +121,7 @@ async function sendRawEmail(options) {
   }
 }
 
-/**
- * Send bulk emails to multiple recipients
- * @param {array} recipients - Array of recipient objects {email, name}
- * @param {string} subject - Email subject
- * @param {string} html - Email HTML content
- * @returns {object} - Results for each recipient
- */
+
 async function sendBulkEmails(recipients, subject, html) {
   try {
     const results = {};

@@ -1,0 +1,384 @@
+{
+  "info": {
+    "_postman_id": "intmavens-api-collection",
+    "name": "IntmavensApi Email Service",
+    "description": "Complete testing collection for IntmavensApi - Contact, Career, Blog email endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status OK\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('OK');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "API Version Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has all endpoints\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.endpoints).to.have.property('contact');",
+                  "    pm.expect(jsonData.endpoints).to.have.property('career');",
+                  "    pm.expect(jsonData.endpoints).to.have.property('blog');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/version",
+              "host": ["{{base_url}}"],
+              "path": ["api", "version"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Email Endpoints - Success Cases",
+      "item": [
+        {
+          "name": "Contact Form - Valid Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has ok property\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok');",
+                  "});",
+                  "",
+                  "pm.test(\"Both admin and user emails sent\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.adminEmail).to.equal(true);",
+                  "    pm.expect(jsonData.data.userEmail).to.equal(true);",
+                  "});",
+                  "",
+                  "pm.test(\"Success message present\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('successfully');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"{{test_email}}\",\n  \"phone\": \"+1-555-0123\",\n  \"message\": \"I'm interested in your cloud migration services. Can you provide more information about your offerings?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "contact"]
+            }
+          }
+        },
+        {
+          "name": "Career Application - Valid Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Career application emails sent\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.adminEmail).to.equal(true);",
+                  "    pm.expect(jsonData.data.userEmail).to.equal(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"{{test_email}}\",\n  \"phone\": \"+1-555-0456\",\n  \"role\": \"Senior Backend Developer\",\n  \"message\": \"I am very interested in the Senior Backend Developer position. With 5+ years of Node.js experience, I believe I can contribute significantly to your team.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/career",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "career"]
+            }
+          }
+        },
+        {
+          "name": "Blog Comment - Valid Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Blog comment emails sent\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.adminEmail).to.equal(true);",
+                  "    pm.expect(jsonData.data.userEmail).to.equal(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Michael Chen\",\n  \"email\": \"{{test_email}}\",\n  \"message\": \"This article was incredibly helpful! The step-by-step guide on cloud migration really clarified the process for me. Keep up the great work!\",\n  \"website\": \"https://michaelchen.dev\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/blog",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "blog"]
+            }
+          }
+        },
+        {
+          "name": "Generic Mail - CONTACT Template",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Generic mail endpoint works\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.ok).to.equal(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templateType\": \"CONTACT\",\n  \"name\": \"Alex Johnson\",\n  \"email\": \"{{test_email}}\",\n  \"phone\": \"+1-555-0101\",\n  \"message\": \"Generic email test using CONTACT template\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/send",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "send"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Email Endpoints - Error Cases",
+      "item": [
+        {
+          "name": "Contact - Missing Phone (Validation Error)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response for missing field\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.ok).to.equal(false);",
+                  "    pm.expect(jsonData.error).to.include('required');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{test_email}}\",\n  \"message\": \"This is missing the phone field\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "contact"]
+            }
+          }
+        },
+        {
+          "name": "Contact - Invalid Email Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Email validation error\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.ok).to.equal(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"invalid-email-format\",\n  \"phone\": \"+1-555-0123\",\n  \"message\": \"This email is invalid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "contact"]
+            }
+          }
+        },
+        {
+          "name": "Generic Mail - Invalid Template Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Invalid template type error\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.ok).to.equal(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templateType\": \"INVALID_TYPE\",\n  \"name\": \"Test User\",\n  \"email\": \"{{test_email}}\",\n  \"phone\": \"+1-555-0123\",\n  \"message\": \"Invalid template\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mail/send",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mail", "send"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "test_email",
+      "value": "test@example.com",
+      "type": "string"
+    }
+  ]
+}

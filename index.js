@@ -41,27 +41,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-/**
- * API version endpoint
- * GET /api/version
- */
-app.get('/api/version', (req, res) => {
-  res.json({
-    ok: true,
-    version: '1.0.0',
-    endpoints: {
-      contact: 'POST /api/mail/contact',
-      career: 'POST /api/mail/career',
-      blog: 'POST /api/mail/blog',
-      generic: 'POST /api/mail/send',
-    },
-  });
-});
-
-/**
- * Mail routes
- * All endpoints under /api/mail/
- */
+/** Mail routes - All endpoints under /api/mail/ */
 app.use('/api/mail', mailRoutes);
 
 // ============== Error Handling ==============

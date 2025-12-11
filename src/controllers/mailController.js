@@ -49,7 +49,7 @@ async function handleContactMail(req, res) {
  */
 async function handleCareerMail(req, res) {
   try {
-    const { name, email, phone, role, message } = req.body;
+    const { name, email, phone, role } = req.body;
     
     // Validation
     if (!name || !email || !phone) {
@@ -74,7 +74,6 @@ async function handleCareerMail(req, res) {
       email, 
       phone, 
       role: role || 'Not Specified',
-      message: message || 'No cover letter provided',
     });
     
     res.json({
@@ -99,7 +98,7 @@ async function handleCareerMail(req, res) {
  */
 async function handleBlogMail(req, res) {
   try {
-    const { name, email, phone, message, postTitle } = req.body;
+    const { name, email, message, website } = req.body;
     
     // Validation
     if (!name || !email || !message) {
@@ -118,13 +117,24 @@ async function handleBlogMail(req, res) {
       });
     }
     
+    // Validate website URL if provided
+    if (website) {
+      try {
+        new URL(website);
+      } catch (err) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Invalid website URL format',
+        });
+      }
+    }
+    
     // Send emails
     const results = await sendEmail('BLOG', { 
       name, 
       email, 
-      phone: phone || 'Not provided',
       message,
-      postTitle: postTitle || 'Blog Post Comment',
+      website: website || 'Not provided',
     });
     
     res.json({
