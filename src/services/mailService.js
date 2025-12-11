@@ -1,6 +1,9 @@
 const transporter = require('../config/mailConfig');
 const { buildTemplate, TEMPLATE_TYPES } = require('../templates');
 
+const HEADER_IMAGE = 'https://res.cloudinary.com/ddgd5aq1u/image/upload/v1765443568/Add_a_heading_1_via4n9.png';
+const FOOTER_IMAGE = 'https://res.cloudinary.com/ddgd5aq1u/image/upload/v1765443577/Add_a_heading_4_g7eoqs.png';
+
 
 async function sendEmail(templateType, formData) {
   try {
@@ -45,9 +48,8 @@ async function sendEmail(templateType, formData) {
       const userSubject = `We received your message`;
       const userHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-            <h1 style="margin: 0; font-size: 24px;">Thank You!</h1>
-            <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">We've received your submission</p>
+          <div style="text-align: center;">
+            <img src="${HEADER_IMAGE}" alt="Intmavens" style="width: 100%; max-width: 600px; display: block;" />
           </div>
           
           <div style="background: #f9f9f9; padding: 30px;">
@@ -57,7 +59,7 @@ async function sendEmail(templateType, formData) {
               Thank you for reaching out to us! We have received your message and will get back to you as soon as possible.
             </p>
             
-            <div style="background: white; padding: 20px; border-radius: 4px; border-left: 4px solid #667eea; margin: 20px 0;">
+            <div style="background: white; padding: 20px; border-radius: 4px; margin: 20px 0;">
               <h3 style="margin-top: 0; color: #333;">Your Message:</h3>
               <p style="color: #555; white-space: pre-wrap; line-height: 1.6;">${message}</p>
             </div>
@@ -69,8 +71,8 @@ async function sendEmail(templateType, formData) {
             <p style="color: #555; margin-bottom: 0;">Best regards,<br><strong>${process.env.SENDER_NAME}</strong></p>
           </div>
           
-          <div style="background: #f0f0f0; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px; color: #666;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Intmavens. All rights reserved.</p>
+          <div style="text-align: center; margin-top: 12px;">
+            <img src="${FOOTER_IMAGE}" alt="Intmavens" style="width: 100%; max-width: 600px; display: block;" />
           </div>
         </div>
       `;

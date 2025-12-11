@@ -1,3 +1,6 @@
+const HEADER_IMAGE = 'https://res.cloudinary.com/ddgd5aq1u/image/upload/v1765443568/Add_a_heading_1_via4n9.png';
+const FOOTER_IMAGE = 'https://res.cloudinary.com/ddgd5aq1u/image/upload/v1765443577/Add_a_heading_4_g7eoqs.png';
+
 module.exports = function contactTemplate(data) {
   const { name, email, phone, message } = data;
   
@@ -5,9 +8,8 @@ module.exports = function contactTemplate(data) {
     subject: `New Contact Form Submission from ${name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-          <h1 style="margin: 0; font-size: 28px;">New Contact Inquiry</h1>
-          <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">From: Intmavens Contact Form</p>
+        <div style="text-align: center;">
+          <img src="${HEADER_IMAGE}" alt="Intmavens" style="width: 100%; max-width: 600px; display: block;" />
         </div>
         
         <div style="background: #f9f9f9; padding: 30px; border-left: 4px solid #667eea;">
@@ -32,15 +34,14 @@ module.exports = function contactTemplate(data) {
             </tr>
           </table>
           
-          <div style="margin: 30px 0; padding: 20px; background: white; border-radius: 4px; border-left: 4px solid #667eea;">
+          <div style="margin: 30px 0; padding: 20px; background: white; border-radius: 4px;">
             <h3 style="margin-top: 0; color: #333;">Message:</h3>
             <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${message}</p>
           </div>
         </div>
         
-        <div style="background: #f0f0f0; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 12px; color: #666;">
-          <p style="margin: 0;">This is an automated email from your website contact form.</p>
-          <p style="margin: 5px 0 0 0;">Please reply to ${email} to get in touch with the sender.</p>
+        <div style="text-align: center; margin-top: 12px;">
+          <img src="${FOOTER_IMAGE}" alt="Intmavens" style="width: 100%; max-width: 600px; display: block;" />
         </div>
       </div>
     `,
